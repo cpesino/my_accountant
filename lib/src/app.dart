@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:my_accountant/src/view/main_menu.dart';
+import 'package:my_accountant/src/features/home/view/home_screen.dart';
+import 'package:my_accountant/src/util/theme/theme.dart';
 
-import 'view/sample_item_details_view.dart';
-import 'view/sample_item_list_view.dart';
-import 'controller/settings_controller.dart';
-import 'view/settings_view.dart';
+import 'settings/settings_controller.dart';
+import 'settings/settings_view.dart';
 
 /// The Widget that configures your application.
 class MyApp extends StatelessWidget {
@@ -27,6 +26,7 @@ class MyApp extends StatelessWidget {
       listenable: settingsController,
       builder: (BuildContext context, Widget? child) {
         return MaterialApp(
+          debugShowCheckedModeBanner: false,
           // Providing a restorationScopeId allows the Navigator built by the
           // MaterialApp to restore the navigation stack when a user leaves and
           // returns to the app after it has been killed while running in the
@@ -57,9 +57,9 @@ class MyApp extends StatelessWidget {
           // Define a light and dark color theme. Then, read the user's
           // preferred ThemeMode (light, dark, or system default) from the
           // SettingsController to display the correct theme.
-          theme: ThemeData(),
-          darkTheme: ThemeData.dark(),
-          themeMode: settingsController.themeMode,
+          theme: TAppTheme.lightTheme,
+          darkTheme: TAppTheme.darkTheme,
+          themeMode: ThemeMode.light, // settingsController.themeMode,
 
           // Define a function to handle named routes in order to support
           // Flutter web url navigation and deep linking.
@@ -70,11 +70,8 @@ class MyApp extends StatelessWidget {
                 switch (routeSettings.name) {
                   case SettingsView.routeName:
                     return SettingsView(controller: settingsController);
-                  case SampleItemDetailsView.routeName:
-                    return const SampleItemDetailsView();
-                  case SampleItemListView.routeName:
                   default:
-                    return const MainMenu();
+                    return const HomeScreen();
                 }
               },
             );
