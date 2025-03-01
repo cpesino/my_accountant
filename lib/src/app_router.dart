@@ -28,7 +28,6 @@ class AppRouter {
           screen = const NotFoundScreen();
       }
     }
-
     return MaterialPageRoute(builder: (_) => screen, settings: settings);
   }
 }

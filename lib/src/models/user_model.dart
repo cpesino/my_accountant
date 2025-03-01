@@ -1,23 +1,23 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
-class User {
+class UserModel {
   int id;
   String name;
   String username;
 
-  User({
+  UserModel({
     required this.id,
     required this.name,
     required this.username,
   });
 
-  User copyWith({
+  UserModel copyWith({
     int? id,
     String? name,
     String? username,
   }) {
-    return User(
+    return UserModel(
       id: id ?? this.id,
       name: name ?? this.name,
       username: username ?? this.username,
@@ -32,8 +32,8 @@ class User {
     };
   }
 
-  factory User.fromMap(Map<String, dynamic> map) {
-    return User(
+  factory UserModel.fromMap(Map<String, dynamic> map) {
+    return UserModel(
       id: map['id'] as int,
       name: map['name'] as String,
       username: map['username'] as String,
@@ -42,14 +42,14 @@ class User {
 
   String toJson() => json.encode(toMap());
 
-  factory User.fromJson(String source) =>
-      User.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory UserModel.fromJson(String source) =>
+      UserModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() => 'User(id: $id, name: $name, username: $username)';
 
   @override
-  bool operator ==(covariant User other) {
+  bool operator ==(covariant UserModel other) {
     if (identical(this, other)) return true;
 
     return other.id == id && other.name == name && other.username == username;
