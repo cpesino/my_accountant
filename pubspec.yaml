@@ -2,7 +2,7 @@ name: my_accountant
 description: "A new Flutter project."
 
 # Prevent accidental publishing to pub.dev.
-publish_to: 'none'
+publish_to: "none"
 
 version: 1.0.0+1
 
@@ -10,17 +10,18 @@ environment:
   sdk: ^3.5.4
 
 dependencies:
+  dio: ^5.8.0+1
   flutter:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
+  flutter_secure_storage: ^9.2.4
   ionicons: ^0.2.2
 
 dev_dependencies:
+  flutter_lints: ^4.0.0
   flutter_test:
     sdk: flutter
-
-  flutter_lints: ^4.0.0
 
 flutter:
   uses-material-design: true
