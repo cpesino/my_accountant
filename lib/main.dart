@@ -3,7 +3,7 @@ import 'package:my_accountant/src/services/auth_service.dart';
 
 import 'src/app.dart';
 import 'src/controller/settings_controller.dart';
-import 'src/service/settings_service.dart';
+import 'src/services/settings_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,10 +16,13 @@ void main() async {
   await settingsController.loadSettings();
 
   AuthService authService = AuthService();
-  authService.isAuthenticated();
+  bool authenticated = await authService.isAuthenticated();
 
   // Run the app and pass in the SettingsController. The app listens to the
   // SettingsController for changes, then passes it further down to the
   // SettingsView.
-  runApp(MyApp(settingsController: settingsController));
+  runApp(MyApp(
+    settingsController: settingsController,
+    authenticated: authenticated,
+  ));
 }

@@ -1,8 +1,13 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:my_accountant/src/app_router.dart';
 import 'package:my_accountant/src/controller/settings_controller.dart';
+import 'package:my_accountant/src/features/auth/login_screen.dart';
 import 'package:my_accountant/src/features/home/home_screen.dart';
+import 'package:my_accountant/src/features/status/not_found_screen.dart';
 import 'package:my_accountant/src/util/theme/theme.dart';
 import 'package:my_accountant/src/features/settings/settings_view.dart';
 
@@ -11,8 +16,10 @@ class MyApp extends StatelessWidget {
   const MyApp({
     super.key,
     required this.settingsController,
+    required this.authenticated,
   });
 
+  final bool authenticated;
   final SettingsController settingsController;
 
   @override
@@ -63,16 +70,10 @@ class MyApp extends StatelessWidget {
           // Define a function to handle named routes in order to support
           // Flutter web url navigation and deep linking.
           onGenerateRoute: (RouteSettings routeSettings) {
-            return MaterialPageRoute<void>(
-              settings: routeSettings,
-              builder: (BuildContext context) {
-                switch (routeSettings.name) {
-                  case SettingsView.routeName:
-                    return SettingsView(controller: settingsController);
-                  default:
-                    return const HomeScreen();
-                }
-              },
+            return AppRouter.onGenerateRoute(
+              routeSettings,
+              authenticated,
+              settingsController: settingsController,
             );
           },
         );
