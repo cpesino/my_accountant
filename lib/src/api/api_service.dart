@@ -15,15 +15,6 @@ class ApiService {
       receiveTimeout: const Duration(seconds: 10),
       headers: {'Accept': 'application/json'},
     ));
-
-    _dio.interceptors.add(
-      InterceptorsWrapper(
-        onError: (DioException e, handler) {
-          log("Error: ${e.response?.statusCode} - ${e.message}");
-          // return handler.next(e);
-        },
-      ),
-    );
   }
 
   // GET request
@@ -36,9 +27,12 @@ class ApiService {
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
       return response.data;
-    } catch (e) {
-      log("ERROR", error: e);
-      // throw Exception("GET request failed: $e");
+    } on DioException catch (e) {
+      if (e.response != null) {
+        throw e.response?.data['message'] ?? "Request failed. Please try again";
+      } else {
+        throw "Network error. Please check your connection";
+      }
     }
   }
 
@@ -49,8 +43,12 @@ class ApiService {
       Response response =
           await _dio.post(endpoint, queryParameters: params, data: body ?? {});
       return response.data;
-    } catch (e) {
-      log("ERROR", error: e);
+    } on DioException catch (e) {
+      if (e.response != null) {
+        throw e.response?.data['message'] ?? "Request failed. Please try again";
+      } else {
+        throw "Network error. Please check your connection";
+      }
     }
   }
 
@@ -66,8 +64,12 @@ class ApiService {
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
       return response.data;
-    } catch (e) {
-      log("ERROR", error: e);
+    } on DioException catch (e) {
+      if (e.response != null) {
+        throw e.response?.data['message'] ?? "Request failed. Please try again";
+      } else {
+        throw "Network error. Please check your connection";
+      }
     }
   }
 
@@ -84,8 +86,12 @@ class ApiService {
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
       return response.data;
-    } catch (e) {
-      log("ERROR", error: e);
+    } on DioException catch (e) {
+      if (e.response != null) {
+        throw e.response?.data['message'] ?? "Request failed. Please try again";
+      } else {
+        throw "Network error. Please check your connection";
+      }
     }
   }
 
@@ -100,8 +106,12 @@ class ApiService {
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
       return response.data;
-    } catch (e) {
-      log("ERROR", error: e);
+    } on DioException catch (e) {
+      if (e.response != null) {
+        throw e.response?.data['message'] ?? "Request failed. Please try again";
+      } else {
+        throw "Network error. Please check your connection";
+      }
     }
   }
 }

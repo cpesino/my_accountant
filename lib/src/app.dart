@@ -3,13 +3,15 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:my_accountant/src/app_router.dart';
 import 'package:my_accountant/src/controller/settings_controller.dart';
 import 'package:my_accountant/src/features/auth/login_screen.dart';
 import 'package:my_accountant/src/features/home/home_screen.dart';
 import 'package:my_accountant/src/features/status/not_found_screen.dart';
 import 'package:my_accountant/src/util/theme/theme.dart';
-import 'package:my_accountant/src/features/settings/settings_view.dart';
+import 'package:my_accountant/src/features/settings/settings_screen.dart';
 
 /// The Widget that configures your application.
 class MyApp extends StatelessWidget {
@@ -31,13 +33,13 @@ class MyApp extends StatelessWidget {
     return ListenableBuilder(
       listenable: settingsController,
       builder: (BuildContext context, Widget? child) {
-        return MaterialApp(
+        return GetMaterialApp(
           debugShowCheckedModeBanner: false,
           // Providing a restorationScopeId allows the Navigator built by the
           // MaterialApp to restore the navigation stack when a user leaves and
           // returns to the app after it has been killed while running in the
           // background.
-          restorationScopeId: 'app',
+          // restorationScopeId: 'app',
 
           // Provide the generated AppLocalizations to the MaterialApp. This
           // allows descendant Widgets to display the correct translations
@@ -67,15 +69,24 @@ class MyApp extends StatelessWidget {
           darkTheme: TAppTheme.darkTheme,
           themeMode: ThemeMode.light, // settingsController.themeMode,
 
+          initialRoute: authenticated ? '/home' : '/login',
+          getPages: [
+            GetPage(name: '/login', page: () => LoginScreen()),
+            GetPage(name: '/home', page: () => HomeScreen()),
+            GetPage(
+                name: '/home',
+                page: () => SettingsScreen(controller: settingsController)),
+            GetPage(name: '/not-found', page: () => const NotFoundScreen()),
+          ],
           // Define a function to handle named routes in order to support
           // Flutter web url navigation and deep linking.
-          onGenerateRoute: (RouteSettings routeSettings) {
-            return AppRouter.onGenerateRoute(
-              routeSettings,
-              authenticated,
-              settingsController: settingsController,
-            );
-          },
+          // onGenerateRoute: (RouteSettings routeSettings) {
+          //   return AppRouter.onGenerateRoute(
+          //     routeSettings,
+          //     authenticated,
+          //     settingsController: settingsController,
+          //   );
+          // },
         );
       },
     );
