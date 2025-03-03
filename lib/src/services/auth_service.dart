@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:my_accountant/src/api/api_service.dart';
 import 'package:my_accountant/src/models/user_model.dart';
@@ -76,21 +77,22 @@ class AuthService {
     String? token = await _storage.read(key: "jwt_token");
     if (token != null) {
       log("Token found");
+      return token;
     } else {
-      log("Token not found");
+      throw "Token not found";
     }
-    return token;
   }
 
   // isAuthenticated
   Future<bool> isAuthenticated() async {
-    String? token = await getToken();
-    final response = await _apiService.get('/auth/check');
-    if (token == null || !response['data']['isAuthenticated']) {
-      log("User is not authenticated");
+    try {
+      await getToken();
+      await _apiService.get('/auth/check');
+      log("User is currently authenticated");
+      return true;
+    } catch (e) {
+      log(e.toString());
       return false;
     }
-    log("User is currently authenticated");
-    return true;
   }
 }

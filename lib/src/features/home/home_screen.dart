@@ -27,10 +27,10 @@ class HomeScreen extends StatelessWidget {
       locale: 'en_us',
       decimalDigits: 2,
     );
-    double totalBudget = 10;
-    double totalExpenses = 0;
+    double totalBudget = 100;
+    double totalExpenses = 27;
     double balance = totalBudget - totalExpenses;
-    double percentage = (1 - (balance / totalBudget)) - 0.1;
+    double percentage = 0.9 - (balance / totalBudget);
 
     void dropdownCallBack(String? selectedValue) {}
 
@@ -60,7 +60,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
                 child: SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.3,
+                  height: 180,
                   child: Stack(
                     children: [
                       WaveWidget(
@@ -70,8 +70,8 @@ class HomeScreen extends StatelessWidget {
                         waveFrequency: 0.25,
                         config: CustomConfig(
                           colors: [
-                            TColors.lighten(TColors.primary, 0.4),
-                            TColors.lighten(TColors.primary, 0.2),
+                            TColors.darken(TColors.primary, 0.2),
+                            TColors.darken(TColors.primary),
                             TColors.primary,
                           ],
                           durations: [
@@ -109,12 +109,12 @@ class HomeScreen extends StatelessWidget {
                                   .textTheme
                                   .labelLarge
                                   ?.copyWith(
-                                    color: TColors.lighten(
-                                        Theme.of(context)
-                                            .textTheme
-                                            .labelLarge!
-                                            .color!,
-                                        0.4),
+                                    color: percentage <= 0.2
+                                        ? TColors.lighten(
+                                            TColors.primary,
+                                            0.3,
+                                          )
+                                        : TColors.lighten(TColors.primary),
                                   ),
                             ),
                             Text(
@@ -123,12 +123,9 @@ class HomeScreen extends StatelessWidget {
                                   .textTheme
                                   .headlineLarge
                                   ?.copyWith(
-                                    color: TColors.lighten(
-                                      Theme.of(context)
-                                          .textTheme
-                                          .headlineLarge!
-                                          .color!,
-                                    ),
+                                    color: percentage <= 0.35
+                                        ? TColors.white
+                                        : TColors.lighten(TColors.primary),
                                   ),
                             ),
                             const SizedBox(height: TSizes.spaceBtwItems),
@@ -143,14 +140,27 @@ class HomeScreen extends StatelessWidget {
                                       style: Theme.of(context)
                                           .textTheme
                                           .labelSmall
-                                          ?.copyWith(color: TColors.grey),
+                                          ?.copyWith(
+                                            color: percentage <= 0.6
+                                                ? TColors.lighten(
+                                                    TColors.primary,
+                                                    0.3,
+                                                  )
+                                                : TColors.lighten(
+                                                    TColors.primary),
+                                          ),
                                     ),
                                     Text(
                                       formatter.format(totalBudget),
                                       style: Theme.of(context)
                                           .textTheme
                                           .titleLarge
-                                          ?.copyWith(color: TColors.white),
+                                          ?.copyWith(
+                                            color: percentage < 0.7
+                                                ? TColors.white
+                                                : TColors.lighten(
+                                                    TColors.primary),
+                                          ),
                                     )
                                   ],
                                 ),
@@ -162,14 +172,27 @@ class HomeScreen extends StatelessWidget {
                                       style: Theme.of(context)
                                           .textTheme
                                           .labelSmall
-                                          ?.copyWith(color: TColors.grey),
+                                          ?.copyWith(
+                                            color: percentage <= 0.6
+                                                ? TColors.lighten(
+                                                    TColors.primary,
+                                                    0.3,
+                                                  )
+                                                : TColors.lighten(
+                                                    TColors.primary),
+                                          ),
                                     ),
                                     Text(
                                       formatter.format(totalExpenses),
                                       style: Theme.of(context)
                                           .textTheme
                                           .titleLarge
-                                          ?.copyWith(color: TColors.white),
+                                          ?.copyWith(
+                                            color: percentage < 0.7
+                                                ? TColors.white
+                                                : TColors.lighten(
+                                                    TColors.primary),
+                                          ),
                                     )
                                   ],
                                 )
