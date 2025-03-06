@@ -6,7 +6,7 @@ import 'package:my_accountant/src/util/constants/api_constants.dart';
 
 class ApiService {
   late Dio _dio;
-  final FlutterSecureStorage _storage = const FlutterSecureStorage();
+  final _storage = const FlutterSecureStorage();
 
   ApiService() {
     _dio = Dio(BaseOptions(
@@ -20,7 +20,11 @@ class ApiService {
   // GET request
   Future<dynamic> get(String endpoint, {Map<String, dynamic>? params}) async {
     try {
+      log("Getting token...");
       String? token = await _storage.read(key: 'jwt_token');
+      if (token == null) {
+        throw "Token not found";
+      }
       Response response = await _dio.get(
         endpoint,
         queryParameters: params,

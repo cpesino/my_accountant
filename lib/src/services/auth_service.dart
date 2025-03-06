@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:my_accountant/src/api/api_service.dart';
 import 'package:my_accountant/src/models/user_model.dart';
@@ -39,9 +38,11 @@ class AuthService {
 
   // register
   // logout
-  Future<void> logout() async {
+  Future<void> clearCredentials() async {
+    log("Deleting credentials from storage...");
     await _storage.delete(key: 'jwt_token');
     await _storage.delete(key: 'user');
+    log("Data erased from storage");
   }
 
   // refreshToken
@@ -57,11 +58,11 @@ class AuthService {
     log("Getting user...");
     String? userStr = await _storage.read(key: "user");
     if (userStr == null) {
+      log("Unable to find user");
       return null;
     }
     log("User found");
-    UserModel user = UserModel.fromJson(userStr);
-    return user;
+    return UserModel.fromJson(userStr);
   }
 
   // saveToken
@@ -73,23 +74,27 @@ class AuthService {
 
   // getToken
   Future<String?> getToken() async {
-    log("Getting token...");
-    String? token = await _storage.read(key: "jwt_token");
-    if (token != null) {
+    try {
+      log("Getting token...");
+      String? token = await _storage.read(key: "jwt_token");
+      if (token == null) {
+        log("Token not found");
+        return null;
+      }
       log("Token found");
       return token;
-    } else {
-      throw "Token not found";
+    } catch (e) {
+      throw e.toString();
     }
   }
 
   // isAuthenticated
   Future<bool> isAuthenticated() async {
     try {
-      await getToken();
-      await _apiService.get('/auth/check');
-      log("User is currently authenticated");
-      return true;
+      final response = await _apiService.get('/auth/check');
+      bool isAuthenticated = response['data']['isAuthenticated'];
+      log("Authenticated: $isAuthenticated");
+      return isAuthenticated;
     } catch (e) {
       log(e.toString());
       return false;

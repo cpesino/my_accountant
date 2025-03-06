@@ -4,12 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:my_accountant/src/common/widgets/custom_text_field.dart';
 import 'package:my_accountant/src/common/widgets/error_box.dart';
-import 'package:my_accountant/src/controller/auth_controller.dart';
+import 'package:my_accountant/src/controllers/auth_controller.dart';
 import 'package:my_accountant/src/util/constants/colors.dart';
 import 'package:my_accountant/src/util/constants/sizes.dart';
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
+
   final AuthController authController = Get.find();
 
   static const routeName = '/login';

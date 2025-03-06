@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_accountant/src/controller/settings_controller.dart';
+import 'package:my_accountant/src/controllers/settings_controller.dart';
 import 'package:my_accountant/src/features/auth/login_screen.dart';
 import 'package:my_accountant/src/features/home/home_screen.dart';
 import 'package:my_accountant/src/features/settings/settings_screen.dart';
