@@ -390,7 +390,7 @@ class HomeScreen extends StatelessWidget {
           ],
         ),
         IconButton(
-          onPressed: () {},
+          onPressed: () => _controller.logout(),
           icon: Icon(
             Icons.notifications,
             color: TColors.lighten(TColors.buttonPrimary, 0.3),

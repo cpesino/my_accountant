@@ -12,16 +12,15 @@ class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
 
   final AuthController authController = Get.find();
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final FocusNode loginButtonFocus = FocusNode();
 
   static const routeName = '/login';
 
   @override
   Widget build(BuildContext context) {
     final _formKey = GlobalKey<FormState>();
-
-    final TextEditingController usernameController = TextEditingController();
-    final TextEditingController passwordController = TextEditingController();
-    final FocusNode loginButtonFocus = FocusNode();
 
     void _submitForm() async {
       if (_formKey.currentState!.validate()) {

@@ -26,4 +26,8 @@ class HomeController extends GetxController {
       isLoading.value = false;
     });
   }
+
+  void logout() {
+    _authController.logout();
+  }
 }
