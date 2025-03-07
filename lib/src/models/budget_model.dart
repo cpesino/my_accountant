@@ -58,8 +58,8 @@ class BudgetModel {
     return BudgetModel(
       id: map['id'] as int,
       name: map['name'] as String,
-      amount: map['amount'] as Decimal,
-      spent: map['spent'] as Decimal,
+      amount: Decimal.parse(map['amount'].toString()),
+      spent: Decimal.parse(map['spent'].toString()),
       startDate: DateTime.parse(map['startDate']),
       endDate: DateTime.parse(map['endDate']),
       period: map['period'] as String,

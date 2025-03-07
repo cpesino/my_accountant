@@ -41,7 +41,7 @@ class ExpenseModel {
     return ExpenseModel(
       id: map['id'] as int,
       description: map['description'] as String,
-      amount: map['amount'] as Decimal,
+      amount: Decimal.parse(map['amount'].toString()),
       createdDate: DateTime.parse(map['createdDate']),
     );
   }

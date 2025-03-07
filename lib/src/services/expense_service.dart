@@ -6,7 +6,7 @@ import 'package:my_accountant/src/models/expense_model.dart';
 class ExpenseService {
   final ApiService _apiService = ApiService();
 
-  Future<List<ExpenseModel>> getUserExpenses(int userId) async {
+  Future<Map<String, dynamic>> getAllUserExpenses(int userId) async {
     try {
       log("Getting expenses of user with ID $userId...");
       final response = await _apiService.get('/expenses/', params: {
@@ -20,7 +20,12 @@ class ExpenseService {
         }
       }
       log("Found ${expenses.length} expenses");
-      return expenses;
+
+      Map<String, dynamic> userExpenses = {
+        "expenses": expenses,
+        "total_expenses": response['data']['total_amount'],
+      };
+      return userExpenses;
     } catch (e) {
       log("Error encountered while getting user expenses", error: e);
       throw e.toString();
