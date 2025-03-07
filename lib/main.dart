@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:my_accountant/src/controllers/auth_controller.dart';
-import 'package:my_accountant/src/services/auth_service.dart';
 
 import 'src/app.dart';
 import 'src/controllers/settings_controller.dart';

@@ -41,13 +41,18 @@ class _ErrorBoxState extends State<ErrorBox> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    widget.errorMessage,
-                    style: Theme.of(context)
-                        .textTheme
-                        .labelSmall
-                        ?.copyWith(color: TColors.textWhite),
+                  Flexible(
+                    child: Text(
+                      widget.errorMessage,
+                      softWrap: true,
+                      overflow: TextOverflow.visible,
+                      style: Theme.of(context)
+                          .textTheme
+                          .labelSmall
+                          ?.copyWith(color: TColors.textWhite),
+                    ),
                   ),
+                  const SizedBox(width: TSizes.sm),
                   IconButton(
                     onPressed: _remove,
                     icon: const Icon(

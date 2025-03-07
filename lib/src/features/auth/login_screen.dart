@@ -12,6 +12,8 @@ class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
 
   final AuthController authController = Get.find();
+
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final FocusNode loginButtonFocus = FocusNode();
@@ -20,13 +22,12 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _formKey = GlobalKey<FormState>();
-
     void _submitForm() async {
       if (_formKey.currentState!.validate()) {
         String username = usernameController.text;
         String password = passwordController.text;
         await authController.login(username: username, password: password);
+        passwordController.text = '';
       }
     }
 

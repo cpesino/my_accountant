@@ -1,10 +1,11 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:decimal/decimal.dart';
 class ExpenseModel {
   int id;
   String description;
-  double amount;
+  Decimal amount;
   DateTime createdDate;
   ExpenseModel({
     required this.id,
@@ -16,7 +17,7 @@ class ExpenseModel {
   ExpenseModel copyWith({
     int? id,
     String? description,
-    double? amount,
+    Decimal? amount,
     DateTime? createdDate,
   }) {
     return ExpenseModel(
@@ -40,7 +41,7 @@ class ExpenseModel {
     return ExpenseModel(
       id: map['id'] as int,
       description: map['description'] as String,
-      amount: map['amount'] as double,
+      amount: map['amount'] as Decimal,
       createdDate: DateTime.parse(map['createdDate']),
     );
   }
