@@ -11,6 +11,7 @@ class BudgetModel {
   DateTime startDate;
   DateTime endDate;
   String period;
+  int categoryId;
 
   BudgetModel({
     required this.id,
@@ -20,6 +21,7 @@ class BudgetModel {
     required this.startDate,
     required this.endDate,
     required this.period,
+    required this.categoryId,
   });
 
   BudgetModel copyWith({
@@ -30,6 +32,7 @@ class BudgetModel {
     DateTime? startDate,
     DateTime? endDate,
     String? period,
+    int? categoryId,
   }) {
     return BudgetModel(
       id: id ?? this.id,
@@ -39,6 +42,7 @@ class BudgetModel {
       startDate: startDate ?? this.startDate,
       endDate: endDate ?? this.endDate,
       period: period ?? this.period,
+      categoryId: categoryId ?? this.categoryId,
     );
   }
 
@@ -48,9 +52,10 @@ class BudgetModel {
       'name': name,
       'amount': amount,
       'spent': spent,
-      'startDate': startDate.millisecondsSinceEpoch,
-      'endDate': endDate.millisecondsSinceEpoch,
+      'startDate': startDate,
+      'endDate': endDate,
       'period': period,
+      'categoryId': categoryId,
     };
   }
 
@@ -63,6 +68,7 @@ class BudgetModel {
       startDate: DateTime.parse(map['startDate']),
       endDate: DateTime.parse(map['endDate']),
       period: map['period'] as String,
+      categoryId: map['categoryId'] as int,
     );
   }
 
@@ -73,20 +79,21 @@ class BudgetModel {
 
   @override
   String toString() {
-    return 'BudgetModel(id: $id, name: $name, amount: $amount, spent: $spent, startDate: $startDate, endDate: $endDate, period: $period)';
+    return 'BudgetModel(id: $id, name: $name, amount: $amount, spent: $spent, startDate: $startDate, endDate: $endDate, period: $period, categoryId: $categoryId)';
   }
 
   @override
   bool operator ==(covariant BudgetModel other) {
     if (identical(this, other)) return true;
-
+  
     return other.id == id &&
         other.name == name &&
         other.amount == amount &&
         other.spent == spent &&
         other.startDate == startDate &&
         other.endDate == endDate &&
-        other.period == period;
+        other.period == period &&
+        other.categoryId == categoryId;
   }
 
   @override
@@ -97,6 +104,7 @@ class BudgetModel {
         spent.hashCode ^
         startDate.hashCode ^
         endDate.hashCode ^
-        period.hashCode;
+        period.hashCode ^
+        categoryId.hashCode;
   }
 }

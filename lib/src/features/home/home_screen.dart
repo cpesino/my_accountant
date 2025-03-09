@@ -42,8 +42,7 @@ class HomeScreen extends StatelessWidget {
           children: [
             _buildHeader(context),
             const SizedBox(height: TSizes.spaceBtwSections),
-            _buildStatsCard(percentage, context, formatter, balance,
-                totalBudget, totalExpenses),
+            _buildStatsCard(percentage, context, formatter, _controller),
             const SizedBox(height: TSizes.spaceBtwItems),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -51,44 +50,6 @@ class HomeScreen extends StatelessWidget {
                 Text(
                   'Transactions',
                   style: Theme.of(context).textTheme.titleLarge,
-                ),
-                DropdownButtonHideUnderline(
-                  child: DropdownButton2(
-                    onChanged: dropdownCallBack,
-                    value: selectedValue,
-                    dropdownStyleData: DropdownStyleData(
-                      width: 100,
-                      padding: const EdgeInsets.symmetric(vertical: 6),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      offset: const Offset(-32, -3),
-                    ),
-                    customButton: Material(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: TSizes.sm,
-                          vertical: TSizes.xs,
-                        ),
-                        child: Text(
-                          'View All',
-                          style: Theme.of(context).textTheme.labelLarge,
-                        ),
-                      ),
-                    ),
-                    items: ExpenseCategory.categories
-                        .map((String item) => DropdownMenuItem<String>(
-                              value: item,
-                              child: Text(
-                                item,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ))
-                        .toList(),
-                  ),
                 ),
               ],
             ),
@@ -100,52 +61,49 @@ class HomeScreen extends StatelessWidget {
                       ? Column(
                           children: _controller.expenses.map((expense) {
                             int index = _controller.expenses.indexOf(expense);
-                            bool isFirst = index == 0;
-                            bool isLast =
-                                index == _controller.expenses.length - 1;
-                            return ListTile(
-                              tileColor: TColors.white,
-                              leading: const Icon(Icons.local_taxi),
-                              title: Text(expense.description),
-                              trailing: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Text(
-                                    '-${expense.amount} Php',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .labelLarge
-                                        ?.copyWith(
-                                          fontWeight: FontWeight.bold,
-                                          color: TColors.error,
-                                        ),
-                                  ),
-                                  Text(
-                                    DateFormat("MMM d, y")
-                                        .format(expense.createdDate),
-                                    style:
-                                        Theme.of(context).textTheme.labelMedium,
-                                  ),
-                                ],
-                              ),
-                              subtitle: Text(
-                                'Cash',
-                                style: Theme.of(context).textTheme.labelMedium,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.vertical(
-                                  top: isFirst
-                                      ? const Radius.circular(
-                                          TSizes.borderRadiusLg)
-                                      : Radius.zero,
-                                  bottom: isLast
-                                      ? const Radius.circular(
-                                          TSizes.borderRadiusLg)
-                                      : Radius.zero,
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: TSizes.sm),
+                              child: ListTile(
+                                tileColor: TColors.white,
+                                leading: Obx(
+                                  () => Icon(ExpenseCategory.icons[index - 1]),
                                 ),
+                                title: Text(expense.description),
+                                trailing: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      '-${expense.amount} Php',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelLarge
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            color: TColors.error,
+                                          ),
+                                    ),
+                                    Text(
+                                      DateFormat("MMM d, y")
+                                          .format(expense.createdDate),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelMedium,
+                                    ),
+                                  ],
+                                ),
+                                subtitle: Text(
+                                  'Cash',
+                                  style:
+                                      Theme.of(context).textTheme.labelMedium,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                    TSizes.borderRadiusLg,
+                                  ),
+                                ),
+                                onTap: () => log("Tap tap"),
                               ),
-                              onTap: () => log("Tap tap"),
                             );
                           }).toList(),
                         )
@@ -159,46 +117,213 @@ class HomeScreen extends StatelessWidget {
                           ),
                         );
             }),
-            // Obx(() {
-            //   return Expanded(
-            //     child: ListView.builder(
-            //       itemCount: expenseController.expenses.length,
-            //       itemBuilder: (_, index) {
-            //         ExpenseModel expense = expenseController.expenses[index];
-            //         return ListTile(
-            //           tileColor: TColors.white,
-            //           title: Text(expense.description),
-            //           trailing: Text('${expense.amount} Php'),
-            //           subtitle: Text(expense.createdDate.toIso8601String()),
-            //           shape: RoundedRectangleBorder(
-            //             borderRadius: index == 0
-            //                 ? const BorderRadius.vertical(
-            //                     top: Radius.circular(TSizes.borderRadiusLg))
-            //                 : index == expenseController.expenses.length - 1
-            //                     ? const BorderRadius.vertical(
-            //                         bottom: Radius.circular(
-            //                             TSizes.borderRadiusLg))
-            //                     : BorderRadius.zero,
-            //           ),
-            //           onTap: () => log("Tap tap"),
-            //         );
-            //       },
-            //     ),
-            //   );
-            // }),
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => showAddNewExpense(context),
+        child: const Icon(Icons.add),
+      ),
     );
+  }
+
+  Future<dynamic> showAddNewExpense(BuildContext context) {
+    String selectedMOP = 'Cash';
+
+    return showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Padding(
+            padding: const EdgeInsets.fromLTRB(
+              TSizes.lg,
+              0,
+              TSizes.lg,
+              TSizes.lg,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Add Transaction',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        color: TColors.darkGrey,
+                      ),
+                ),
+                const SizedBox(height: TSizes.sm),
+                Container(
+                  padding: const EdgeInsets.all(TSizes.sm),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF8F8FA),
+                    borderRadius: BorderRadius.circular(TSizes.borderRadiusLg),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Amount',
+                        style: Theme.of(context).textTheme.labelMedium,
+                      ),
+                      TextFormField(
+                        keyboardType: TextInputType.number,
+                        style: Theme.of(context).textTheme.headlineLarge,
+                        decoration: InputDecoration(
+                          isDense: true,
+                          border: InputBorder.none,
+                          prefixIcon: Text(
+                            "₱",
+                            style: Theme.of(context)
+                                .textTheme
+                                .headlineLarge
+                                ?.copyWith(
+                                  color: TColors.darkGrey,
+                                  fontWeight: FontWeight.normal,
+                                ),
+                          ),
+                          prefixIconConstraints:
+                              const BoxConstraints(minWidth: 0, minHeight: 0),
+                          hintText: '0',
+                          hintStyle: Theme.of(context)
+                              .textTheme
+                              .headlineLarge
+                              ?.copyWith(
+                                color: TColors.darkGrey,
+                                fontWeight: FontWeight.normal,
+                              ),
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: TSizes.sm),
+                Container(
+                  padding: const EdgeInsets.all(TSizes.sm),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF8F8FA),
+                    borderRadius: BorderRadius.circular(TSizes.borderRadiusLg),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Description',
+                        style: Theme.of(context).textTheme.labelMedium,
+                      ),
+                      TextField(
+                        style: Theme.of(context).textTheme.titleLarge,
+                        decoration: InputDecoration(
+                          isDense: true,
+                          border: InputBorder.none,
+                          hintText: 'Add description...',
+                          hintStyle:
+                              Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    color: TColors.darkGrey,
+                                  ),
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: TSizes.sm),
+                Container(
+                  padding: const EdgeInsets.all(TSizes.sm),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF8F8FA),
+                    borderRadius: BorderRadius.circular(TSizes.borderRadiusLg),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Obx(
+                        () => Text(
+                          'Category: ${_controller.selectedCategory.value}',
+                          style: Theme.of(context).textTheme.labelMedium,
+                        ),
+                      ),
+                      const SizedBox(height: TSizes.sm),
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          return Obx(
+                            () => Wrap(
+                              spacing: 10,
+                              runSpacing: 10,
+                              children: _controller.budgets.map((item) {
+                                int index = _controller.budgets.indexOf(item);
+                                return SizedBox(
+                                  height: 40,
+                                  width: 40,
+                                  child: Material(
+                                    color: Colors.blue,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(
+                                        TSizes.borderRadiusMd,
+                                      ),
+                                    ),
+                                    child: InkWell(
+                                      borderRadius: BorderRadius.circular(
+                                        TSizes.borderRadiusMd,
+                                      ),
+                                      onTap: () {
+                                        _controller.selectedCategory.value =
+                                            _controller.budgets[index].name;
+                                      },
+                                      child: Center(
+                                        child: Icon(
+                                          ExpenseCategory.icons[_controller
+                                                  .budgets[index].categoryId -
+                                              1],
+                                          size: TSizes.iconSm,
+                                          color:
+                                              TColors.lighten(Colors.blue, 0.4),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: TSizes.md),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        _controller.selectedCategory.value = 'Select below';
+                        _controller.selectedMOP.value = 'Cash';
+                      },
+                      child: const Text('Cancel'),
+                    ),
+                    TextButton(
+                      onPressed: () {},
+                      child: const Text('Add'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          );
+        });
   }
 
   Widget _buildStatsCard(
     double percentage,
     BuildContext context,
     NumberFormat formatter,
-    double balance,
-    double totalBudget,
-    double totalExpenses,
+    HomeController controller,
   ) {
     return Card(
       elevation: 20,
@@ -262,19 +387,23 @@ class HomeScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                              
-                        Text(
-                          formatter.format(balance),
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineLarge
-                              ?.copyWith(
-                                height: 0.8,
-                                color: percentage <= 0.35
-                                    ? TColors.white
-                                    : TColors.primary,
-                              ),
-                        ),
+                        Obx(() {
+                          return Text(
+                            formatter.format(
+                              controller.totalBudget.value!.toDouble() -
+                                  controller.totalExpenses.value!.toDouble(),
+                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .headlineLarge
+                                ?.copyWith(
+                                  height: 0.8,
+                                  color: percentage <= 0.35
+                                      ? TColors.white
+                                      : TColors.primary,
+                                ),
+                          );
+                        }),
                         const SizedBox(width: TSizes.xs),
                         Text(
                           'Php',
@@ -297,13 +426,13 @@ class HomeScreen extends StatelessWidget {
                           context,
                           percentage,
                           formatter,
-                          totalBudget,
+                          controller,
                         ),
                         _buildExpenses(
                           context,
                           percentage,
                           formatter,
-                          totalExpenses,
+                          controller,
                         )
                       ],
                     ),
@@ -318,7 +447,7 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _buildExpenses(BuildContext context, double percentage,
-      NumberFormat formatter, double totalExpenses) {
+      NumberFormat formatter, HomeController controller) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -333,18 +462,21 @@ class HomeScreen extends StatelessWidget {
                     : TColors.lighten(TColors.primary),
               ),
         ),
-        Text(
-          formatter.format(totalExpenses),
+        Obx(() {
+          return Text(
+            formatter.format(controller.totalExpenses.value?.toDouble()),
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 color: percentage < 0.7 ? TColors.white : TColors.primary,
               ),
-        )
+          );
+        }),
+        
       ],
     );
   }
 
   Widget _buildBudget(BuildContext context, double percentage,
-      NumberFormat formatter, double totalBudget) {
+      NumberFormat formatter, HomeController controller) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -359,12 +491,15 @@ class HomeScreen extends StatelessWidget {
                     : TColors.lighten(TColors.primary),
               ),
         ),
-        Text(
-          formatter.format(totalBudget),
+        Obx(() {
+          return Text(
+            formatter.format(controller.totalBudget.value?.toDouble()),
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 color: percentage < 0.7 ? TColors.white : TColors.primary,
               ),
-        )
+          );
+        }),
+        
       ],
     );
   }

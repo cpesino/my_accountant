@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:decimal/decimal.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:my_accountant/src/controllers/auth_controller.dart';
 import 'package:my_accountant/src/controllers/budget_controller.dart';
@@ -21,7 +22,10 @@ class HomeController extends GetxController {
   RxList<BudgetModel> budgets = <BudgetModel>[].obs;
   var totalBudget = Rxn<Decimal>();
   var totalExpenses = Rxn<Decimal>();
+  var selectedMOP = 'Cash'.obs;
   RxString errorMessage = ''.obs;
+  RxString selectedCategory = 'Select below'.obs;
+  RxList<String> userBudgetCategories = <String>[].obs;
 
   @override
   void onInit() {
@@ -49,7 +53,7 @@ class HomeController extends GetxController {
       Map<String, dynamic> userBudgets =
           await _budgetController.getAllUserBudgets();
       budgets.assignAll(userBudgets['budgets']);
-      totalExpenses.value =
+      totalBudget.value =
           Decimal.parse(userBudgets['total_budget'].toString());
 
       Future.delayed(const Duration(seconds: 5), () {
