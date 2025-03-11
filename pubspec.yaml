@@ -24,6 +24,7 @@ dependencies:
   intl: ^0.20.2
   line_icons: ^2.0.3
   shimmer: ^3.0.0
+  toastification: ^3.0.1
   wave: ^0.2.2
 
 dev_dependencies:

@@ -56,13 +56,15 @@ class HomeController extends GetxController {
       totalBudget.value =
           Decimal.parse(userBudgets['total_budget'].toString());
 
-      Future.delayed(const Duration(seconds: 5), () {
-        isLoading.value = false;
-      });
+      isLoading.value = false;
     } catch (e) {
       errorMessage.value = e.toString();
       log("Error!", error: e);
     }
+  }
+
+  Future<ExpenseModel> addNewExpense(ExpenseModel expense) async {
+    return await _expenseController.addNewExpense(expense);
   }
 
   void logout() {

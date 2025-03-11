@@ -3,18 +3,18 @@ import 'dart:convert';
 
 import 'package:decimal/decimal.dart';
 class ExpenseModel {
-  int id;
-  String description;
-  Decimal amount;
-  DateTime createdDate;
-  int categoryId;
+  int? id;
+  String? description;
+  Decimal? amount;
+  DateTime? createdDate;
+  int? categoryId;
 
   ExpenseModel({
-    required this.id,
-    required this.categoryId,
-    required this.description,
-    required this.amount,
-    required this.createdDate,
+    this.id,
+    this.categoryId,
+    this.description,
+    this.amount,
+    this.createdDate,
   });
 
   ExpenseModel copyWith({
@@ -39,7 +39,7 @@ class ExpenseModel {
       'categoryId': categoryId,
       'description': description,
       'amount': amount,
-      'createdDate': createdDate.millisecondsSinceEpoch,
+      'createdDate': createdDate,
     };
   }
 
