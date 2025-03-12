@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:decimal/decimal.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:my_accountant/src/controllers/auth_controller.dart';
 import 'package:my_accountant/src/controllers/budget_controller.dart';
@@ -22,9 +21,12 @@ class HomeController extends GetxController {
   RxList<BudgetModel> budgets = <BudgetModel>[].obs;
   var totalBudget = Rxn<Decimal>();
   var totalExpenses = Rxn<Decimal>();
-  var selectedMOP = 'Cash'.obs;
-  RxString errorMessage = ''.obs;
+  RxString mode = 'Cash'.obs;
+  RxString description = ''.obs;
+  RxString amount = ''.obs;
   RxString selectedCategory = 'Select below'.obs;
+  RxInt category = 16.obs;
+  RxString errorMessage = ''.obs;
   RxList<String> userBudgetCategories = <String>[].obs;
 
   @override
@@ -55,19 +57,36 @@ class HomeController extends GetxController {
       budgets.assignAll(userBudgets['budgets']);
       totalBudget.value =
           Decimal.parse(userBudgets['total_budget'].toString());
-
-      isLoading.value = false;
     } catch (e) {
       errorMessage.value = e.toString();
       log("Error!", error: e);
+    } finally {
+      isLoading.value = false;
     }
   }
 
-  Future<ExpenseModel> addNewExpense(ExpenseModel expense) async {
-    return await _expenseController.addNewExpense(expense);
+  void addNewExpense() async {
+    try {
+      isLoading.value = true;
+      ExpenseModel expense = ExpenseModel(
+        amount: Decimal.parse(amount.value),
+        description: description.value,
+        categoryId: category.value,
+        mode: mode.value.toUpperCase(),
+      );
+      ExpenseModel newExpense = await _expenseController.addNewExpense(expense);
+      expenses.add(newExpense);
+      Get.back();
+    } catch (e) {
+      errorMessage.value = e.toString();
+    } finally {
+      isLoading.value = false;
+    }
+    return null;
   }
 
   void logout() {
     _authController.logout();
   }
+
 }

@@ -5,6 +5,7 @@ import 'package:decimal/decimal.dart';
 class ExpenseModel {
   int? id;
   String? description;
+  String? mode;
   Decimal? amount;
   DateTime? createdDate;
   int? categoryId;
@@ -15,12 +16,14 @@ class ExpenseModel {
     this.description,
     this.amount,
     this.createdDate,
+    this.mode,
   });
 
   ExpenseModel copyWith({
     int? id,
     int? categoryId,
     String? description,
+    String? mode,
     Decimal? amount,
     DateTime? createdDate,
   }) {
@@ -30,6 +33,7 @@ class ExpenseModel {
       description: description ?? this.description,
       amount: amount ?? this.amount,
       createdDate: createdDate ?? this.createdDate,
+      mode: mode ?? this.mode,
     );
   }
 
@@ -40,6 +44,7 @@ class ExpenseModel {
       'description': description,
       'amount': amount,
       'createdDate': createdDate,
+      'mode': mode,
     };
   }
 
@@ -48,6 +53,7 @@ class ExpenseModel {
       id: map['id'] as int,
       categoryId: map['categoryId'] as int,
       description: map['description'] as String,
+      mode: map['mode'] as String,
       amount: Decimal.parse(map['amount'].toString()),
       createdDate: DateTime.parse(map['createdDate']),
     );
@@ -60,7 +66,7 @@ class ExpenseModel {
 
   @override
   String toString() {
-    return 'ExpenseModel(id: $id, categoryId: $categoryId, description: $description, amount: $amount, createdDate: $createdDate)';
+    return 'ExpenseModel(id: $id, categoryId: $categoryId, description: $description, mode: $mode, amount: $amount, createdDate: $createdDate)';
   }
 
   @override
@@ -71,6 +77,7 @@ class ExpenseModel {
         other.categoryId == categoryId &&
         other.description == description &&
         other.amount == amount &&
+        other.mode == mode &&
         other.createdDate == createdDate;
   }
 
@@ -79,6 +86,7 @@ class ExpenseModel {
     return id.hashCode ^
         categoryId.hashCode ^
         description.hashCode ^
+        mode.hashCode ^
         amount.hashCode ^
         createdDate.hashCode;
   }

@@ -36,20 +36,38 @@ class ExpenseService {
       int userId, ExpenseModel expense) async {
     try {
       log("Adding new expense...");
-      final response = await _apiService.postWithAuth('/expenses/', params: {
-        "userId": userId,
-        "categoryId": expense.categoryId,
-      }, body: {
-        "description": expense.description,
-        "amount": expense.amount,
-      });
-      Map<String, dynamic> newExpense = response['data'];
-      log(response['message']);
-      log(response['data'].toString());
+      final response = await _apiService.postWithAuth(
+        '/expenses/',
+        params: {
+          "userId": userId,
+          "categoryId": expense.categoryId,
+        },
+        body: expense.toMap(),
+      );
+      Map<String, dynamic> newExpense = {};
+      log('DATA!');
+      if (response['data'] != null) {
+        newExpense = response['data'];
+        log(response['message']);
+        log(response['data'].toString());
+      }
       return newExpense;
     } catch (e) {
       log(e.toString());
-      throw e.toString();
+      String errorMessage = getBadRequestError(e.toString()) ?? '';
+      throw errorMessage.isNotEmpty
+          ? '$errorMessage is required'
+          : e.toString();
     }
   }
+
+  String? getBadRequestError(String error) {
+    RegExp regExp = RegExp(r"Required request parameter '([^']+)'");
+    RegExpMatch? match = regExp.firstMatch(error);
+    if (match == null) {
+      return '';
+    }
+    return match.group(1);
+  }
+
 }

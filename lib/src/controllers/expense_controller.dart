@@ -37,11 +37,8 @@ class ExpenseController extends GetxController {
       }
       Map<String, dynamic> newExpense =
           await _expenseService.addNewExpense(userId, expense);
-      log("id:${newExpense['id']}");
-      log("categoryId:${newExpense['categoryId']}");
       return ExpenseModel.fromMap(newExpense);
     } catch (e) {
-      log(e.toString());
       throw e.toString();
     }
   }

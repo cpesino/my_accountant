@@ -5,8 +5,10 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:my_accountant/src/common/widgets/error_box.dart';
 import 'package:my_accountant/src/common/widgets/shimmer_list.dart';
 import 'package:my_accountant/src/features/home/home_controller.dart';
+import 'package:my_accountant/src/features/home/widgets/new_expense_form.dart';
 import 'package:my_accountant/src/models/expense_model.dart';
 import 'package:my_accountant/src/util/constants/colors.dart';
 import 'package:my_accountant/src/util/constants/expense_category.dart';
@@ -24,7 +26,6 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    String? selectedValue; // = 'View All';
     var formatter = NumberFormat.decimalPatternDigits(
       decimalDigits: 2,
     );
@@ -33,8 +34,6 @@ class HomeScreen extends StatelessWidget {
     double totalExpenses = 3000;
     double balance = totalBudget - totalExpenses;
     double percentage = 1 - (balance / totalBudget);
-
-    void dropdownCallBack(String? selectedValue) {}
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -109,7 +108,7 @@ class HomeScreen extends StatelessWidget {
                                   ],
                                 ),
                                 subtitle: Text(
-                                  'Cash',
+                                  expense.mode!.toLowerCase().capitalizeFirst!,
                                   style:
                                       Theme.of(context).textTheme.labelMedium,
                                 ),
@@ -144,228 +143,267 @@ class HomeScreen extends StatelessWidget {
   }
 
   Future<dynamic> showAddNewExpense(BuildContext context) {
-    String selectedMOP = 'Cash';
-    final formKey = GlobalKey<FormState>();
-    int? category;
-    final TextEditingController amountController = TextEditingController();
-    final TextEditingController descriptionController = TextEditingController();
-
-    addNewExpense() async {
-      ExpenseModel expense = ExpenseModel(
-        categoryId: category,
-        description: descriptionController.text,
-        amount: Decimal.parse(amountController.text),
-      );
-      expense = await _controller.addNewExpense(expense);
-      _controller.expenses.add(expense);
-    }
-
     return showModalBottomSheet(
         context: context,
         isScrollControlled: true,
         builder: (context) {
           return SingleChildScrollView(
-            child: Form(
-              key: formKey,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  TSizes.lg,
-                  0,
-                  TSizes.lg,
-                  TSizes.lg,
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Add Transaction',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            color: TColors.darkGrey,
-                          ),
-                    ),
-                    const SizedBox(height: TSizes.sm),
-                    Container(
-                      padding: const EdgeInsets.all(TSizes.sm),
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF8F8FA),
-                        borderRadius:
-                            BorderRadius.circular(TSizes.borderRadiusLg),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Amount',
-                            style: Theme.of(context).textTheme.labelMedium,
-                          ),
-                          TextFormField(
-                            controller: amountController,
-                            keyboardType: TextInputType.number,
-                            style: Theme.of(context).textTheme.headlineLarge,
-                            decoration: InputDecoration(
-                              isDense: true,
-                              border: InputBorder.none,
-                              prefixIcon: Text(
-                                "₱",
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headlineLarge
-                                    ?.copyWith(
-                                      color: TColors.darkGrey,
-                                      fontWeight: FontWeight.normal,
-                                    ),
-                              ),
-                              prefixIconConstraints: const BoxConstraints(
-                                  minWidth: 0, minHeight: 0),
-                              hintText: '0',
-                              hintStyle: Theme.of(context)
-                                  .textTheme
-                                  .headlineLarge
-                                  ?.copyWith(
-                                    color: TColors.darkGrey,
-                                    fontWeight: FontWeight.normal,
-                                  ),
-                              enabledBorder: InputBorder.none,
-                              focusedBorder: InputBorder.none,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: TSizes.sm),
-                    Container(
-                      padding: const EdgeInsets.all(TSizes.sm),
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF8F8FA),
-                        borderRadius:
-                            BorderRadius.circular(TSizes.borderRadiusLg),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Description',
-                            style: Theme.of(context).textTheme.labelMedium,
-                          ),
-                          TextField(
-                            controller: descriptionController,
-                            style: Theme.of(context).textTheme.titleLarge,
-                            decoration: InputDecoration(
-                              isDense: true,
-                              border: InputBorder.none,
-                              hintText: 'Add description...',
-                              hintStyle: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium
-                                  ?.copyWith(
-                                    color: TColors.darkGrey,
-                                  ),
-                              enabledBorder: InputBorder.none,
-                              focusedBorder: InputBorder.none,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: TSizes.sm),
-                    Container(
-                      padding: const EdgeInsets.all(TSizes.sm),
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF8F8FA),
-                        borderRadius:
-                            BorderRadius.circular(TSizes.borderRadiusLg),
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Obx(
-                            () => Text(
-                              'Category: ${_controller.selectedCategory.value}',
-                              style: Theme.of(context).textTheme.labelMedium,
-                            ),
-                          ),
-                          const SizedBox(height: TSizes.sm),
-                          LayoutBuilder(
-                            builder: (context, constraints) {
-                              return Obx(
-                                () => Wrap(
-                                  spacing: 10,
-                                  runSpacing: 10,
-                                  children: _controller.budgets.map((item) {
-                                    int index =
-                                        _controller.budgets.indexOf(item);
-                                    return SizedBox(
-                                      height: 40,
-                                      width: 40,
-                                      child: Material(
-                                        color: Colors.blue,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            TSizes.borderRadiusMd,
-                                          ),
-                                        ),
-                                        child: InkWell(
-                                          borderRadius: BorderRadius.circular(
-                                            TSizes.borderRadiusMd,
-                                          ),
-                                          onTap: () {
-                                            _controller.selectedCategory.value =
-                                                _controller.budgets[index].name;
-                                            category = _controller
-                                                .budgets[index].categoryId;
-                                          },
-                                          child: Center(
-                                            child: Icon(
-                                              ExpenseCategory.icons[_controller
-                                                      .budgets[index]
-                                                      .categoryId -
-                                                  1],
-                                              size: TSizes.iconSm,
-                                              color: TColors.lighten(
-                                                  Colors.blue, 0.4),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  }).toList(),
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: TSizes.md),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            _controller.selectedCategory.value = 'Select below';
-                            _controller.selectedMOP.value = 'Cash';
-                          },
-                          child: const Text('Cancel'),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            addNewExpense();
-                            Navigator.of(context).pop();
-                          },
-                          child: const Text('Add'),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            child: NewExpenseForm(),
+            // Form(
+            //   key: formKey,
+            //   child: Padding(
+            //     padding: const EdgeInsets.fromLTRB(
+            //       TSizes.lg,
+            //       0,
+            //       TSizes.lg,
+            //       TSizes.lg,
+            //     ),
+            //     child: Column(
+            //       mainAxisSize: MainAxisSize.min,
+            //       crossAxisAlignment: CrossAxisAlignment.start,
+            //       children: [
+            //         Text(
+            //           'Add Transaction',
+            //           style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            //                 color: TColors.darkGrey,
+            //               ),
+            //         ),
+            //         const SizedBox(height: TSizes.sm),
+            //         SizedBox(
+            //           height: 200,
+            //           width: double.infinity,
+            //           child: Row(
+            //             children: [
+            //               Container(
+            //                 padding: const EdgeInsets.all(TSizes.sm),
+            //                 decoration: BoxDecoration(
+            //                   color: const Color(0xFFF8F8FA),
+            //                   borderRadius:
+            //                       BorderRadius.circular(TSizes.borderRadiusLg),
+            //                 ),
+            //                 child: Column(
+            //                   crossAxisAlignment: CrossAxisAlignment.start,
+            //                   children: [
+            //                     Text(
+            //                       'Amount',
+            //                       style:
+            //                           Theme.of(context).textTheme.labelMedium,
+            //                     ),
+            //                     Flexible(
+            //                       child: TextFormField(
+            //                         controller: amountController,
+            //                         keyboardType: TextInputType.number,
+            //                         style: Theme.of(context)
+            //                             .textTheme
+            //                             .headlineLarge,
+            //                         decoration: InputDecoration(
+            //                           isDense: true,
+            //                           border: InputBorder.none,
+            //                           prefixIcon: Text(
+            //                             "₱",
+            //                             style: Theme.of(context)
+            //                                 .textTheme
+            //                                 .headlineLarge
+            //                                 ?.copyWith(
+            //                                   color: TColors.darkGrey,
+            //                                   fontWeight: FontWeight.normal,
+            //                                 ),
+            //                           ),
+            //                           prefixIconConstraints:
+            //                               const BoxConstraints(
+            //                                   minWidth: 0, minHeight: 0),
+            //                           hintText: '0',
+            //                           hintStyle: Theme.of(context)
+            //                               .textTheme
+            //                               .headlineLarge
+            //                               ?.copyWith(
+            //                                 color: TColors.darkGrey,
+            //                                 fontWeight: FontWeight.normal,
+            //                               ),
+            //                           enabledBorder: InputBorder.none,
+            //                           focusedBorder: InputBorder.none,
+            //                         ),
+            //                       ),
+            //                     ),
+            //                   ],
+            //                 ),
+            //               ),
+            //               const SizedBox(width: TSizes.sm),
+            //               Container(
+            //                 padding: const EdgeInsets.all(TSizes.sm),
+            //                 decoration: BoxDecoration(
+            //                   color: const Color(0xFFF8F8FA),
+            //                   borderRadius:
+            //                       BorderRadius.circular(TSizes.borderRadiusLg),
+            //                 ),
+            //                 child: Column(
+            //                   crossAxisAlignment: CrossAxisAlignment.start,
+            //                   children: [
+            //                     Text(
+            //                       'Paid via',
+            //                       style:
+            //                           Theme.of(context).textTheme.labelMedium,
+            //                     ),
+            //                     Flexible(
+            //                       child: DropdownButtonFormField2(
+            //                         items: <String>['Cash', 'Card', 'Online']
+            //                             .map((String value) {
+            //                           return DropdownMenuItem<String>(
+            //                             value: value.toUpperCase(),
+            //                             child: Text(value),
+            //                           );
+            //                         }).toList(),
+            //                         onChanged: (String? newValue) {
+            //                           selectedMOP = newValue ?? 'CASH';
+            //                         },
+            //                       ),
+            //                     )
+            //                   ],
+            //                 ),
+            //               ),
+            //             ],
+            //           ),
+            //         ),
+            //         const SizedBox(height: TSizes.sm),
+            //         Container(
+            //           padding: const EdgeInsets.all(TSizes.sm),
+            //           width: double.infinity,
+            //           decoration: BoxDecoration(
+            //             color: const Color(0xFFF8F8FA),
+            //             borderRadius:
+            //                 BorderRadius.circular(TSizes.borderRadiusLg),
+            //           ),
+            //           child: Column(
+            //             crossAxisAlignment: CrossAxisAlignment.start,
+            //             children: [
+            //               Text(
+            //                 'Description',
+            //                 style: Theme.of(context).textTheme.labelMedium,
+            //               ),
+            //               TextField(
+            //                 controller: descriptionController,
+            //                 style: Theme.of(context).textTheme.titleLarge,
+            //                 decoration: InputDecoration(
+            //                   isDense: true,
+            //                   border: InputBorder.none,
+            //                   hintText: 'Add description...',
+            //                   hintStyle: Theme.of(context)
+            //                       .textTheme
+            //                       .titleMedium
+            //                       ?.copyWith(
+            //                         color: TColors.darkGrey,
+            //                       ),
+            //                   enabledBorder: InputBorder.none,
+            //                   focusedBorder: InputBorder.none,
+            //                 ),
+            //               ),
+            //             ],
+            //           ),
+            //         ),
+            //         const SizedBox(height: TSizes.sm),
+            //         Container(
+            //           padding: const EdgeInsets.all(TSizes.sm),
+            //           width: double.infinity,
+            //           decoration: BoxDecoration(
+            //             color: const Color(0xFFF8F8FA),
+            //             borderRadius:
+            //                 BorderRadius.circular(TSizes.borderRadiusLg),
+            //           ),
+            //           child: Column(
+            //             mainAxisSize: MainAxisSize.min,
+            //             crossAxisAlignment: CrossAxisAlignment.start,
+            //             children: [
+            //               Obx(
+            //                 () => Text(
+            //                   'Category: ${_controller.selectedCategory.value}',
+            //                   style: Theme.of(context).textTheme.labelMedium,
+            //                 ),
+            //               ),
+            //               const SizedBox(height: TSizes.sm),
+            //               LayoutBuilder(
+            //                 builder: (context, constraints) {
+            //                   return Obx(
+            //                     () => Wrap(
+            //                       spacing: 10,
+            //                       runSpacing: 10,
+            //                       children: _controller.budgets.map((item) {
+            //                         int index =
+            //                             _controller.budgets.indexOf(item);
+            //                         return SizedBox(
+            //                           height: 40,
+            //                           width: 40,
+            //                           child: Material(
+            //                             color: Colors.blue,
+            //                             shape: RoundedRectangleBorder(
+            //                               borderRadius: BorderRadius.circular(
+            //                                 TSizes.borderRadiusMd,
+            //                               ),
+            //                             ),
+            //                             child: InkWell(
+            //                               borderRadius: BorderRadius.circular(
+            //                                 TSizes.borderRadiusMd,
+            //                               ),
+            //                               onTap: () {
+            //                                 _controller.selectedCategory.value =
+            //                                     _controller.budgets[index].name;
+            //                                 category = _controller
+            //                                     .budgets[index].categoryId;
+            //                               },
+            //                               child: Center(
+            //                                 child: Icon(
+            //                                   ExpenseCategory.icons[_controller
+            //                                           .budgets[index]
+            //                                           .categoryId -
+            //                                       1],
+            //                                   size: TSizes.iconSm,
+            //                                   color: TColors.lighten(
+            //                                       Colors.blue, 0.4),
+            //                                 ),
+            //                               ),
+            //                             ),
+            //                           ),
+            //                         );
+            //                       }).toList(),
+            //                     ),
+            //                   );
+            //                 },
+            //               ),
+            //             ],
+            //           ),
+            //         ),
+            //         const SizedBox(height: TSizes.sm),
+            //         Obx(() {
+            //           return _controller.errorMessage.isNotEmpty
+            //               ? ErrorBox(
+            //                   errorMessage: _controller.errorMessage.value,
+            //                 )
+            //               : const SizedBox();
+            //         }),
+            //         const SizedBox(height: TSizes.md),
+            //         Row(
+            //           mainAxisAlignment: MainAxisAlignment.end,
+            //           children: [
+            //             TextButton(
+            //               onPressed: () {
+            //                 Navigator.of(context).pop();
+            //                 _controller.selectedCategory.value = 'Select below';
+            //                 _controller.selectedMOP.value = 'Cash';
+            //               },
+            //               child: const Text('Cancel'),
+            //             ),
+            //             TextButton(
+            //               onPressed: () {
+            //                 addNewExpense();
+            //               },
+            //               child: const Text('Add'),
+            //             ),
+            //           ],
+            //         ),
+            //       ],
+            //     ),
+            //   ),
+            // ),
+          
           );
         });
   }
